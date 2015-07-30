@@ -134,6 +134,40 @@ module.exports = yeoman.generators.Base.extend({
             );
         }, this);
 
+        this.fs.copyTpl(
+            this.templatePath('_project.raml'),
+            this.destinationPath(this.props.projectTitle + '-' + this.props.apiVersion + '.raml'),
+            this.props
+        );
+
+        this.fs.copy(
+            this.templatePath('sample-date-time-schema.json'),
+            this.destinationPath('schema/date-time.json')
+        );
+        this.fs.copy(
+            this.templatePath('sample-schema.json'),
+            this.destinationPath('schema/accepted.json')
+        );
+        this.fs.copy(
+            this.templatePath('sample-example.json'),
+            this.destinationPath('examples/accepted.json')
+        );
+
+        this.fs.copy(
+            this.templatePath('raml2html-templates/template.nunjucks'),
+            this.destinationPath('templates/template.nunjucks')
+        );
+
+        this.fs.copy(
+            this.templatePath('raml2html-templates/resource.nunjucks'),
+            this.destinationPath('templates/resource.nunjucks')
+        );
+
+        this.fs.copy(
+            this.templatePath('raml2html-templates/item.nunjucks'),
+            this.destinationPath('templates/item.nunjucks')
+        );
+
         ['.gitignore', '.editorconfig'].forEach(function (tplPath) {
             this.fs.copy(
                 this.templatePath(tplPath),

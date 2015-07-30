@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "accepted.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "acceptedDate": {
+      "$ref": "date-time.json#/definitions/dateTime"
+    }
+  }
+}
