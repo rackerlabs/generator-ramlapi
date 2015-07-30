@@ -1,0 +1,30 @@
+{
+  "name": "generator-ramlapi",
+  "version": "0.1.0",
+  "description": "Yeoman generator for RAML API projects",
+  "license": "MIT",
+  "main": "app/index.js",
+  "repository": "mmorga/generator-ramlapi",
+  "author": {
+    "name": "Mark Morga",
+    "email": "markmorga@gmail.com",
+    "url": "https://github.com/mmorga"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^0.19.0",
+    "chalk": "^1.0.0",
+    "yosay": "^1.0.2"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  }
+}
