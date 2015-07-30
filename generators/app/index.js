@@ -126,7 +126,7 @@ module.exports = yeoman.generators.Base.extend({
 
     writing: function () {
         // TODO: perhaps make package.json added by API rather than file copy
-        ['_LICENSE', '_package.json', '_README.md'].forEach(function (tplPath) {
+        ['_.gitignore', '_.editorconfig', '_LICENSE', '_package.json', '_README.md'].forEach(function (tplPath) {
             this.fs.copyTpl(
                 this.templatePath(tplPath),
                 this.destinationPath(tplPath.substr(1)),
@@ -141,53 +141,23 @@ module.exports = yeoman.generators.Base.extend({
         );
 
         this.fs.copy(
-            this.templatePath('sample-date-time-schema.json'),
-            this.destinationPath('schema/date-time.json')
-        );
-        this.fs.copy(
-            this.templatePath('sample-schema.json'),
-            this.destinationPath('schema/accepted.json')
-        );
-        this.fs.copy(
-            this.templatePath('sample-example.json'),
-            this.destinationPath('examples/accepted.json')
+            this.templatePath('schema/*'),
+            this.destinationPath('schema/')
         );
 
         this.fs.copy(
-            this.templatePath('raml2html-templates/template.nunjucks'),
-            this.destinationPath('templates/template.nunjucks')
+            this.templatePath('examples/*'),
+            this.destinationPath('examples/')
         );
 
         this.fs.copy(
-            this.templatePath('raml2html-templates/resource.nunjucks'),
-            this.destinationPath('templates/resource.nunjucks')
+            this.templatePath('raml2html-templates/*'),
+            this.destinationPath('templates/')
         );
 
         this.fs.copy(
-            this.templatePath('raml2html-templates/item.nunjucks'),
-            this.destinationPath('templates/item.nunjucks')
-        );
-
-        ['.gitignore', '.editorconfig'].forEach(function (tplPath) {
-            this.fs.copy(
-                this.templatePath(tplPath),
-                this.destinationPath(tplPath)
-            );
-        }, this);
-
-        this.fs.copy(
-            this.templatePath('.gitkeep'),
-            this.destinationPath('schema/.gitkeep')
-        );
-
-        this.fs.copy(
-            this.templatePath('.gitkeep'),
-            this.destinationPath('examples/.gitkeep')
-        );
-
-        this.fs.copy(
-            this.templatePath('.gitkeep'),
-            this.destinationPath('raml/.gitkeep')
+            this.templatePath('raml/*'),
+            this.destinationPath('raml/')
         );
 
         if (!this.fs.exists('Gruntfile.js')) {

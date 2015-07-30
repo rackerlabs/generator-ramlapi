@@ -44,3 +44,8 @@ The concatenation of the JSON Schema is fairly naive at present. It has the foll
 3. JSON Schema that is referenced via a `"$ref"` is expected to be defined under a `"definitions"` sub-schema. See `schema/date-time.json` for an example.
 4. There are no namespace checks done, so watch out for name collisions.
 
+Example files are stored in the `examples/` directory. Examples must begin with the base name of the schema file they belong to. For example, each of the following examples would be validated against `schema/sample.json`:
+
+1. `examples/sample.json`
+2. `examples/sample2.json`
+3. `examples/sample-3.json`
