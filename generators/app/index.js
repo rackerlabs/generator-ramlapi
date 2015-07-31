@@ -121,6 +121,7 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     configuring: function () {
+        this.props.mainRamlFile = this.props.projectTitle + '-' + this.props.apiVersion + '.raml';
         this.config.save();
     },
 
@@ -136,7 +137,7 @@ module.exports = yeoman.generators.Base.extend({
 
         this.fs.copyTpl(
             this.templatePath('_project.raml'),
-            this.destinationPath(this.props.projectTitle + '-' + this.props.apiVersion + '.raml'),
+            this.destinationPath(this.props.mainRamlFile),
             this.props
         );
 
@@ -186,6 +187,9 @@ module.exports = yeoman.generators.Base.extend({
                         }
                     }
                 }));
+
+            this.gruntfile.insertConfig("raml_cop",
+                "{'" + this.props.mainRamlFile + "': {src: ['" + this.props.mainRamlFile + "']}}");
 
             // Default task(s).
             this.gruntfile.registerTask('default', [

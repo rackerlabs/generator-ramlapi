@@ -23,6 +23,7 @@
         "grunt": "^0.4.5",
         "grunt-json-schema-compose": "^0.1.0",
         "grunt-raml-api-project": "^0.1.1",
+        "grunt-raml-cop": "^0.1.0",
         "grunt-raml2html": "^0.3.1",
         "grunt-tv4": "^0.4.1",
         "js-yaml": "^3.3.1",
@@ -30,7 +31,6 @@
         "json-pointer": "^0.3.0",
         "json-schema-compose": "^0.8.0",
         "jsonpath": "^0.1.8",
-        "raml-cop": "^1.1.0",
         "raml2html": "^2.0.2",
         "tv4": "^1.1.9"
     }
