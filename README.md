@@ -92,9 +92,7 @@ Example files are stored in the `examples/` directory. Examples must begin with 
 ## Generator improvements to come
 
 1. Consider moving to Gulp ;-)
-2. make a grunt plugin for:
-    1. raml-cop
-3. scaffold the github page
+2. scaffold the github page
 
 ## License
 
