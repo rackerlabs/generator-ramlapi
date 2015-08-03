@@ -9,19 +9,23 @@ module.exports = yeoman.generators.Base.extend({
 
     constructor: function () {
         yeoman.generators.Base.apply(this, arguments);
-
-        // This makes `appname` a required argument.
-        // this.argument('appname', { type: String, required: true });
-        // And you can then access it later on this way; e.g. CamelCased
-        // this.appname = ls.camelCase(this.appname);
     },
 
     prompting: function () {
+        // TODO: read package.json and main raml files if they exist to
+        //       populate defaults with correct values
+        //       Values in the RAML should take priority over values in package.json
         var done = this.async(),
             prompts = [{
                 type: 'input',
                 name: 'projectTitle',
-                message: 'What is the name of your API? (example: "widget")',
+                message: 'What is the title of your API? (example: "Widget Warehouse")',
+                default: this.appname,
+                store: true
+            }, {
+                type: 'input',
+                name: 'projectName',
+                message: 'What is the name of your API? (example: "widget-warehouse")',
                 default: this.appname,
                 store: true
             }, {
@@ -42,6 +46,14 @@ module.exports = yeoman.generators.Base.extend({
                         return true;
                     }
                     return false;
+                },
+                store: true
+            }, {
+                type: 'input',
+                name: 'baseUri',
+                message: 'What is the API\'s baseUri?',
+                default: function (answers) {
+                    return 'https://' + answers.projectName + '.example.com'
                 },
                 store: true
             }, {
@@ -76,6 +88,9 @@ module.exports = yeoman.generators.Base.extend({
                 name: 'projectHomePage',
                 message: 'What is the home page URL for this project?',
                 default: function (answers) {
+                    if (!answers.repositoryType || !answers.repositoryUrl) {
+                        return '';
+                    }
                     if (answers.repositoryType === 'github' || answers.repositoryType === 'git') {
                         if (answers.repositoryUrl.indexOf('http') === 0) {
                             return path.dirname(answers.repositoryUrl) + '/' +
@@ -87,7 +102,7 @@ module.exports = yeoman.generators.Base.extend({
                 store: true
             }, {
                 type: 'input',
-                name: "projectIssueTrackerUrl",
+                name: 'projectIssueTrackerUrl',
                 message: 'What is the URL for the issue tracker for this project?',
                 default: function (answers) {
                     if (answers.repositoryType === 'github' || answers.repositoryType === 'git') {
@@ -100,7 +115,7 @@ module.exports = yeoman.generators.Base.extend({
                 store: true
             }, {
                 type: 'input',
-                name: "license",
+                name: 'license',
                 message: 'What is the license for this project?',
                 choices: ['Apache-2.0', 'GFDL-1.3', 'MIT', 'SEE LICENSE IN LICENSE'],
                 default: 'Apache-2.0',
@@ -167,8 +182,8 @@ module.exports = yeoman.generators.Base.extend({
             this.gruntfile.loadNpmTasks('grunt-json-schema-compose');
             this.gruntfile.loadNpmTasks('grunt-raml-api-project');
 
-            this.gruntfile.insertConfig("pkg", "grunt.file.readJSON('package.json')");
-            this.gruntfile.insertConfig("tv4",
+            this.gruntfile.insertConfig('pkg', 'grunt.file.readJSON("package.json")');
+            this.gruntfile.insertConfig('tv4',
                 JSON.stringify({
                     options: {
                         multi: true,
@@ -178,7 +193,7 @@ module.exports = yeoman.generators.Base.extend({
                         language: 'en'
                     }
                 }));
-            this.gruntfile.insertConfig("raml2html",
+            this.gruntfile.insertConfig('raml2html',
                 JSON.stringify({
                     all: {
                         options: {
@@ -188,8 +203,8 @@ module.exports = yeoman.generators.Base.extend({
                     }
                 }));
 
-            this.gruntfile.insertConfig("raml_cop",
-                "{'" + this.props.mainRamlFile + "': {src: ['" + this.props.mainRamlFile + "']}}");
+            this.gruntfile.insertConfig('raml_cop',
+                '{"' + this.props.mainRamlFile + '": {src: ["' + this.props.mainRamlFile + '"]}}');
 
             // Default task(s).
             this.gruntfile.registerTask('default', [
@@ -197,7 +212,8 @@ module.exports = yeoman.generators.Base.extend({
                 'json_schema_compose',
                 'tv4',
                 'copy_raml_to_public',
-                'raml2html']);
+                'raml2html'
+            ]);
         }
     },
 

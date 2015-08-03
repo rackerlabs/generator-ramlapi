@@ -12,17 +12,27 @@ describe('ramlapi:app', function() {
                 skipInstall: true
             })
             .withPrompts({
-                someOption: true
+                projectTitle: 'example',
+                projectName: 'example'
             })
             .on('end', done);
     });
 
     it('creates files', function() {
         assert.file([
-            'bower.json',
+            'example-0.1.0.raml',
             'package.json',
             '.editorconfig',
-            '.jshintrc'
+            'LICENSE',
+            '.gitignore',
+            'README.md',
+            'templates/item.nunjucks',
+            'templates/resource.nunjucks',
+            'templates/template.nunjucks',
+            'schema/accepted.json',
+            'schema/date-time.json',
+            'raml/acceptances.raml',
+            'examples/accepted.json'
         ]);
     });
 });

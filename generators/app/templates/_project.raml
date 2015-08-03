@@ -4,7 +4,7 @@ title: <%= projectTitle %>
 documentation:
   - title: <%= projectTitle %>
     content: <%= projectDescription %>
-baseUri: https://api.devicestack.rackspace.com/{version}
+baseUri: <%= baseUri %>/{version}
 version: v<%= apiVersion %>
 mediaType: application/json
 protocols: [ HTTPS ]
