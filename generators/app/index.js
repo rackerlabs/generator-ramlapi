@@ -316,18 +316,29 @@ module.exports = yeoman.generators.Base.extend({
       this._pkg.private = this.props.true;
     }
     this._pkg.dependencies = this._pkg.dependencies || {};
-    this._pkg.dependencies.grunt = '^0.4.5';
-    this._pkg.dependencies['grunt-json-schema-compose'] = '>=0.1.0';
-    this._pkg.dependencies['grunt-raml-api-project'] = '>=0.1.2';
-    this._pkg.dependencies['grunt-ramllint'] = '>=0.1.0';
-    this._pkg.dependencies['grunt-raml2html'] = '>=0.3.1';
-    this._pkg.dependencies['grunt-tv4'] = '>=0.4.1';
+    this._pkg.dependencies.async = '^1.4.0';
+    this._pkg.dependencies.gulp = '^3.9.0';
+    this._pkg.dependencies['gulp-debug'] = '^2.0.1';
+    this._pkg.dependencies['gulp-filter'] = '^3.0.0';
+    this._pkg.dependencies['gulp-jsonlint'] = '^1.1.0';
+    this._pkg.dependencies['gulp-rename'] = '^1.2.2';
+    this._pkg.dependencies['gulp-util'] = '^3.0.6';
+    this._pkg.dependencies['gulp-watch'] = '^4.3.4';
+    this._pkg.dependencies['js-yaml'] = '^3.3.1';
+    this._pkg.dependencies['json-schema-ref-parser'] = '^1.0.0-alpha.10';
+    this._pkg.dependencies['map-stream'] = '0.0.6';
+    this._pkg.dependencies['raml-parser'] = '^0.8.11';
+    this._pkg.dependencies.raml2html = '^2.0.2';
+    this._pkg.dependencies.ramllint = '^1.2.2';
+    this._pkg.dependencies.through2 = '^2.0.0';
+    this._pkg.dependencies.traverse = '^0.6.6';
+    this._pkg.dependencies.tv4 = '^1.1.9';
     this.fs.writeJSON(this.destinationPath('package.json'), this._pkg);
   },
 
   writing: function () {
     this._writePackageJson();
-    ['_.gitignore', '_.editorconfig', '_LICENSE', '_README.md'].forEach(function (tplPath) {
+    ['_.gitignore', '_.editorconfig', '_LICENSE', '_README.md', '_gulpfile.js'].forEach(function (tplPath) {
       this.fs.copyTpl(
         this.templatePath(tplPath),
         this.destinationPath(tplPath.substr(1)),
@@ -335,21 +346,27 @@ module.exports = yeoman.generators.Base.extend({
       );
     }, this);
 
-    this.fs.copyTpl(
-      this.templatePath('_project.raml'),
-      this.destinationPath(this.props.mainRamlFile),
-      this.props
-    );
+    if (glob.sync('*.raml').length === 0) {
+      this.fs.copyTpl(
+        this.templatePath('_project.raml'),
+        this.destinationPath(this.props.mainRamlFile),
+        this.props
+      );
 
-    this.fs.copy(
-      this.templatePath('schema/*'),
-      this.destinationPath('schema/')
-    );
+      if (glob.sync('schema/*.json').length === 0) {
+        this.fs.copy(
+          this.templatePath('schema/*'),
+          this.destinationPath('schema/')
+        );
+      }
 
-    this.fs.copy(
-      this.templatePath('examples/*'),
-      this.destinationPath('examples/')
-    );
+      if (glob.sync('examples/*.json').length === 0) {
+        this.fs.copy(
+          this.templatePath('examples/*'),
+          this.destinationPath('examples/')
+        );
+      }
+    }
 
     this.fs.copy(
       this.templatePath('raml2html-templates/*'),
@@ -361,45 +378,10 @@ module.exports = yeoman.generators.Base.extend({
       this.destinationPath('raml/')
     );
 
-    if (!this.fs.exists('Gruntfile.js')) {
-      this.gruntfile.loadNpmTasks('grunt-tv4');
-      this.gruntfile.loadNpmTasks('grunt-raml2html');
-      this.gruntfile.loadNpmTasks('grunt-json-schema-compose');
-      this.gruntfile.loadNpmTasks('grunt-raml-api-project');
-
-      this.gruntfile.insertConfig('pkg', 'grunt.file.readJSON("package.json")');
-      this.gruntfile.insertConfig('tv4',
-        JSON.stringify({
-          options: {
-            multi: true,
-            fresh: true,
-            checkRecursive: false,
-            banUnknownProperties: true,
-            language: 'en'
-          }
-        }));
-      this.gruntfile.insertConfig('raml2html',
-        JSON.stringify({
-          all: {
-            options: {
-              mainTemplate: 'template.nunjucks',
-              templatesPath: 'templates'
-            }
-          }
-        }));
-
-      this.gruntfile.insertConfig('raml_cop',
-        '{"' + this.props.mainRamlFile + '": {src: ["' + this.props.mainRamlFile + '"]}}');
-
-      // Default task(s).
-      this.gruntfile.registerTask('default', [
-        'scan_raml_project',
-        'json_schema_compose',
-        'tv4',
-        'copy_raml_to_public',
-        'raml2html'
-      ]);
-    }
+    this.fs.copy(
+      this.templatePath('lib/*'),
+      this.destinationPath('lib/')
+    );
   },
 
   install: function () {
