@@ -5,10 +5,11 @@ var jsrp = require('json-schema-ref-parser');
 var traverse = require('traverse');
 var through2 = require('through2');
 var gutil = require('gulp-util');
+var utils = require('./utils.js');
 
 function reportTaskError(err) {
   if (err) {
-    console.log('Task Error: ' + err);
+    gutil.log('Task Error: ', err);
   }
 }
 
@@ -25,20 +26,31 @@ function dereferenceSchema(task, cb) {
 function derefSchemas(obj, schemaFolder, cb) {
   var q = async.queue(dereferenceSchema),
     refParser = new jsrp(),
-    previousDir = process.cwd();
+    previousDir = process.cwd(),
+    paramRe = /<<[^>]+>>/,
+    json;
+
   process.chdir(schemaFolder);
 
   traverse(obj).forEach(function (x) {
     if (this.isLeaf && (this.key === 'schema' ||
       (this.parent && this.parent.parent && this.parent.parent.key === 'schemas'))) {
-      q.push({
-        schema: JSON.parse(x),
-        context: this,
-        parser: refParser
-      }, reportTaskError);
+      if (!paramRe.test(x)) {
+        try {
+          json = JSON.parse(x);
+          q.push({
+            schema: json,
+            context: this,
+            parser: refParser
+          }, reportTaskError);
+        } catch (err) {
+          gutil.log('Error!', this.path.join('/'), err, '\n', x);
+
+          cb(new gutil.PluginError('deref-raml-schema', 'Unable to parse schema at path ' + this.path.join('/') + ' ' + err));
+        }
+      }
     }
   });
-
   q.drain = function () {
     process.chdir(previousDir);
     cb(null, obj);
@@ -46,25 +58,20 @@ function derefSchemas(obj, schemaFolder, cb) {
 }
 
 function derefRamlSchema(schemaFolder) {
-  var ramlparser = require('raml-parser');
-
   var stream = through2.obj(function (file, enc, done) {
-    var fail = function (message) {
-      done(new gutil.PluginError('deref-raml-schema', message));
+    var raml, fail = function (message) {
+      done(message);
     };
     if (file.isBuffer()) {
-      ramlparser.load(file.contents.toString(enc)).then(function (raml) {
-        derefSchemas(raml, schemaFolder, function (err, raml) {
-          stream.push(new gutil.File({
-            base: file.base,
-            cwd: file.cwd,
-            path: file.path,
-            contents: new Buffer(JSON.stringify(raml))
-          }));
-          done();
-        });
-      }, function (error) {
-        console.log('Error parsing: ' + error);
+      raml = JSON.parse(file.contents.toString(enc));
+      derefSchemas(raml, schemaFolder, function (err, raml) {
+        stream.push(new gutil.File({
+          base: file.base,
+          cwd: file.cwd,
+          path: file.path,
+          contents: new Buffer(JSON.stringify(raml))
+        }));
+        done();
       });
     } else if (file.isStream()) {
       fail('Streams are not supported: ' + file.inspect());

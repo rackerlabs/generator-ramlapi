@@ -11,12 +11,16 @@ var traverse = require('traverse');
 var matches = [];
 
 function isBodyPath(pathAry) {
-  return pathAry.some(function (cv) { return cv === 'body'; });
+  return pathAry.some(function (cv) {
+    return cv === 'body';
+  });
 }
 
 function isNewPath(pathAry) {
   var pathStr = pathAry.join('/');
-  if (matches.some(function (cv) { return cv === pathStr; })) {
+  if (matches.some(function (cv) {
+    return cv === pathStr;
+  })) {
     return false;
   }
   matches = matches.concat(pathStr);
@@ -24,9 +28,14 @@ function isNewPath(pathAry) {
 }
 
 function validateSchemaExample(schema, example) {
+  var paramRe = /<<[^>]+>>/;
+  if (paramRe.test(schema) || paramRe.test(example)) {
+    return;
+  }
+
   var result = tv4.validateMultiple(JSON.parse(example), JSON.parse(schema));
   if (result.missing.length > 0) {
-    console.log('Missing Schemas: ' + JSON.stringify(result.missing, null, '  '));
+    gutil.log('Missing Schemas: ', JSON.stringify(result.missing, null, '  '));
   }
   if (!result.valid) {
     throw new Error(result.errors.map(function (error) {
@@ -51,7 +60,7 @@ function lookForExamples(ramlObj) {
         }
       } else {
         if (isNewPath(this.parent.path)) {
-          console.log('Warning: schema ' + this.path.join('/') + ' missing example');
+          gutil.log('Warning: schema ', this.path.join('/'), ' missing example');
         }
       }
     } else if (this.key === 'example') {
@@ -63,7 +72,7 @@ function lookForExamples(ramlObj) {
           }
         } else {
           if (isNewPath(this.parent.path)) {
-            console.log('Warning: example ' + this.path.join('/') + ' missing schema');
+            gutil.log('Warning: example ', this.path.join('/'), ' missing schema');
           }
         }
       }
@@ -94,6 +103,13 @@ var validateExamplesPlugin = function (options) {
       ramlObj = JSON.parse(String(file.contents));
       lookForExamples(ramlObj);
     } catch (err) {
+      cb(new PluginError(
+        'validate-examples', {
+          name: 'validateExamplesPlugin',
+          filename: file.path,
+          message: err,
+        }
+      ));
       errorMessage = err.message;
     }
     file.validateExamples = formatOutput(errorMessage);

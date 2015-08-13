@@ -3,42 +3,82 @@
 var through2 = require('through2');
 var gutil = require('gulp-util');
 var traverse = require('traverse');
+var path = require('path');
+var ramlparser = require('raml-parser');
 
-function fixResources(obj, cb) {
-  traverse(obj).forEach(function (x) {
-    var k;
-    if (this.parent && this.parent.key === 'resources') {
-      k = x.relativeUri;
-      delete x.relativeUri;
-      delete x.relativeUriPathSegments;
-      this.parent.parent.node[k] = x;
-      if (this.parent.node.length <= 1) {
-        this.parent.remove();
-      } else {
-        this.remove();
+function resourceTransfer(item, collectionParentPath, traverseObj) {
+  var relativeUri = item.relativeUri;
+  delete item.relativeUri;
+  delete item.relativeUriPathSegments;
+  traverseObj.set(collectionParentPath.concat(relativeUri), item);
+}
+
+function methodTransfer(item, collectionParentPath, traverseObj) {
+  var itemId = item.method;
+  delete item.method;
+  traverseObj.set(collectionParentPath.concat(itemId), item);
+}
+
+function fix(obj, targetElement, itemTransfer, cb) {
+  try {
+    var trObj = traverse(obj);
+    // Sort longest paths first to ensure children are processed before parents
+    var paths = trObj.paths().sort(function (a, b) { return b.length - a.length; });
+    // Reduce to only the immediate children of resources elements
+    paths = paths.reduce(function (pv, cv) {
+      if (cv[cv.length - 1] === targetElement) {
+        pv.push(cv);
       }
-    }
-  });
-
+      return pv;
+    }, []);
+    // Move each resource to its correct destination under parent
+    paths.forEach(function (collectionPath) {
+      var collection = trObj.get(collectionPath),
+        collectionParentPath = collectionPath.slice(0, -1),
+        collectionParent = trObj.get(collectionParentPath);
+      collection.forEach(function (item) {
+        itemTransfer(item, collectionParentPath, trObj);
+      });
+      delete collectionParent[targetElement];
+    });
+  } catch (err) {
+    cb(new gutil.Error('Error in fixMethods', err));
+  }
   cb(null, obj);
 }
 
-function fixMethods(obj, cb) {
-  var k;
-  traverse(obj).forEach(function (x) {
-    if (this.parent && this.parent.key === 'methods') {
-      k = x.method;
-      delete x.method;
-      this.parent.parent.node[k] = x;
-      if (this.parent.node.length <= 1) {
-        this.parent.remove();
-      } else {
-        this.remove();
-      }
-    }
-  });
+function extname(file) {
+  return file.extname || path.extname(file.path);
+}
 
-  cb(null, obj);
+function correctRamlStructure(stream, file, ramlObj, done) {
+  fix(ramlObj, 'resources', resourceTransfer, function (err, updatedRes) {
+    fix(updatedRes, 'methods', methodTransfer, function (err, updatedData) {
+      if (updatedData.baseUriParameters && updatedData.baseUriParameters.version) {
+        delete updatedData.baseUriParameters.version;
+      }
+      stream.push(new gutil.File({
+        base: file.base,
+        cwd: file.cwd,
+        path: file.path,
+        contents: new Buffer(JSON.stringify(updatedData))
+      }));
+      done();
+    });
+  });
+}
+
+function doWorkFromRaml(stream, file, enc, done) {
+  ramlparser.load(file.contents.toString(enc)).then(function (ramlObj) {
+    correctRamlStructure(stream, file, ramlObj, done);
+  }, function (error) {
+    done(new gutil.Error('Error parsing RAML', error));
+  });
+}
+
+function doWorkFromJson(stream, file, enc, done) {
+  var ramlObj = JSON.parse(file.contents.toString(enc));
+  correctRamlStructure(stream, file, ramlObj, done);
 }
 
 function jsonToRamlStruct() {
@@ -47,20 +87,11 @@ function jsonToRamlStruct() {
       done(new gutil.PluginError('json-to-raml-struct', message));
     };
     if (file.isBuffer()) {
-      fixResources(JSON.parse(file.contents.toString(enc)), function (err, updatedRes) {
-        fixMethods(updatedRes, function (err, updatedData) {
-          if (updatedData.baseUriParameters && updatedData.baseUriParameters.version) {
-            delete updatedData.baseUriParameters.version;
-          }
-          stream.push(new gutil.File({
-            base: file.base,
-            cwd: file.cwd,
-            path: file.path,
-            contents: new Buffer(JSON.stringify(updatedData))
-          }));
-          done();
-        });
-      });
+      if (extname(file) === '.raml') {
+        doWorkFromRaml(stream, file, enc, done);
+      } else { // json
+        doWorkFromJson(stream, file, enc, done);
+      }
     } else if (file.isStream()) {
       fail('Streams are not supported: ' + file.inspect());
     } else if (file.isNull()) {

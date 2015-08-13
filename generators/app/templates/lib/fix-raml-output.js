@@ -10,14 +10,14 @@ var yaml = require('js-yaml');
 // that style of string scalar.
 function fixupRaml(raml) {
   var inFoldSection = false,
-    badEndRe = />(-|\++)?$/,
+    badEndRe = /: *>(-|\++)?$/,
     sectionIndent = -1,
     lineIndent = 0,
     lastLine = '',
     result = raml.split('\n').reduce(function (pv, cv) {
       var cols;
       if (!inFoldSection && cv.match(badEndRe)) {
-        cv = cv.replace(badEndRe, '|');
+        cv = cv.replace(badEndRe, ': |');
         inFoldSection = true;
       } else if (inFoldSection) {
         cols = cv.match(/^( *)/);
@@ -61,11 +61,12 @@ function fixRamlOutput() {
 
     if (file.isBuffer()) {
       ramlObj = JSON.parse(file.contents.toString(enc));
+      ramlObj = fixupRaml('#%RAML 0.8\n---\n' + yaml.dump(ramlObj));
       stream.push(new gutil.File({
         base: file.base,
         cwd: file.cwd,
         path: file.path,
-        contents: new Buffer(fixupRaml('#%RAML 0.8\n---\n' + yaml.dump(ramlObj)))
+        contents: new Buffer(ramlObj)
       }));
       done();
     } else if (file.isStream()) {

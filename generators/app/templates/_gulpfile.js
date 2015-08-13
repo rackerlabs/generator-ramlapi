@@ -33,12 +33,11 @@ gulp.task('apidoc', function () {
 
   return gulp.src(API_SPEC)
     // .pipe(watch(['*.raml', 'raml/**/*.raml', 'common-raml/**/*.raml', 'examples/**/*.json', 'schema/**/*.json', 'templates/*.nunjucks']))
-    .pipe(debug())
     .pipe(gulpFilter(API_SPEC))
     .pipe(ramllint())
     .pipe(ramllint.reporter())
-    .pipe(deref(schemaFolder))
     .pipe(ramlStruct())
+    .pipe(deref(schemaFolder))
     .pipe(validateExamples())
     .pipe(validateExamples.reporter())
     .pipe(fixRamlOutput())
