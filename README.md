@@ -21,10 +21,10 @@ Update [NPM](https://www.npmjs.com). Depending on your installation, you may nee
 npm install -g npm
 ```
 
-Install Yeoman, [Grunt](gruntjs.com) and generator-ramlapi:
+Install Yeoman, [Gulp](gulpjs.com) and generator-ramlapi:
 
 ```bash
-npm install -g yo grunt-cli generator-ramlapi
+npm install -g yo gulp generator-ramlapi
 ```
 
 ## Beginning a project
