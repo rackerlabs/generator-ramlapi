@@ -56,24 +56,26 @@ function fixRamlOutput() {
   var stream = through2.obj(function (file, enc, done) {
     var ramlObj,
       fail = function (message) {
-        done(new gutil.PluginError('deref-raml-schema', message));
+        done(new gutil.PluginError('fix-raml-output', message));
       };
 
-    if (file.isBuffer()) {
-      ramlObj = JSON.parse(file.contents.toString(enc));
-      ramlObj = fixupRaml('#%RAML 0.8\n---\n' + yaml.dump(ramlObj));
-      stream.push(new gutil.File({
-        base: file.base,
-        cwd: file.cwd,
-        path: file.path,
-        contents: new Buffer(ramlObj)
-      }));
-      done();
-    } else if (file.isStream()) {
-      fail('Streams are not supported: ' + file.inspect());
+    if (file.isStream()) {
+      return fail('Streams are not supported: ' + file.inspect());
     } else if (file.isNull()) {
-      fail('Input file is null: ' + file.inspect());
+      return fail('Input file is null: ' + file.inspect());
+    } else if (!file.isBuffer()) {
+      return fail('Expected a buffer: ' + file.inspect());
     }
+
+    ramlObj = JSON.parse(file.contents.toString(enc));
+    ramlObj = fixupRaml('#%RAML 0.8\n---\n' + yaml.dump(ramlObj));
+    stream.push(new gutil.File({
+      base: file.base,
+      cwd: file.cwd,
+      path: file.path,
+      contents: new Buffer(ramlObj)
+    }));
+    done();
   });
 
   return stream;

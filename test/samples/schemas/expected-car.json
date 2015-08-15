@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "car",
+  "type": "object",
+  "properties": {
+    "make": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "year": {
+      "type": "integer"
+    },
+    "color": {
+      "type": "string"
+    }
+  },
+  "required": ["make", "model", "year", "color"]
+}

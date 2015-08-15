@@ -95,9 +95,10 @@ ramlLintPlugin.failOnError = function () {
           message: file.ramllint.message,
         }
       );
+      return cb(error);
     }
 
-    return cb(error, file);
+    return cb(null, file);
   });
 };
 
@@ -108,7 +109,7 @@ ramlLintPlugin.failAfterError = function () {
   var errorCount = 0;
 
   return through.obj(function (file, enc, cb) {
-    errorCount += file.ramllint.success === false
+    errorCount += file.ramllint.success === false;
 
     cb(null, file);
 

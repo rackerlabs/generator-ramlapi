@@ -5,7 +5,6 @@ var jsrp = require('json-schema-ref-parser');
 var traverse = require('traverse');
 var through2 = require('through2');
 var gutil = require('gulp-util');
-var utils = require('./utils.js');
 
 function reportTaskError(err) {
   if (err) {
@@ -57,14 +56,21 @@ function derefSchemas(obj, schemaFolder, cb) {
   };
 }
 
-function derefRamlSchema(schemaFolder) {
-  var stream = through2.obj(function (file, enc, done) {
-    var raml, fail = function (message) {
-      done(message);
+function derefRamlSchemaFunc(schemaFolder) {
+  return function (file, enc, done) {
+    var raml, stream = this, fail = function (message) {
+      return done(new gutil.PluginError('deref-raml-schema', message, {showStack: true}));
     };
     if (file.isBuffer()) {
-      raml = JSON.parse(file.contents.toString(enc));
+      try {
+        raml = JSON.parse(file.contents.toString(enc));
+      } catch(err) {
+        fail(err);
+      }
       derefSchemas(raml, schemaFolder, function (err, raml) {
+        if (err) {
+          return fail(err);
+        }
         stream.push(new gutil.File({
           base: file.base,
           cwd: file.cwd,
@@ -78,9 +84,12 @@ function derefRamlSchema(schemaFolder) {
     } else if (file.isNull()) {
       fail('Input file is null: ' + file.inspect());
     }
-  });
+  };
+}
 
-  return stream;
+function derefRamlSchema(schemaFolder) {
+  return through2.obj(derefRamlSchemaFunc(schemaFolder));
 }
 
 module.exports = derefRamlSchema;
+module.exports.derefRamlSchemaFunc = derefRamlSchemaFunc;

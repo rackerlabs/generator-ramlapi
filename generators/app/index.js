@@ -3,7 +3,6 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
 var _ = require('lodash/string');
-var path = require('path');
 var glob = require('glob');
 var async = require('async');
 var ramlParser = require('raml-parser');
@@ -16,15 +15,6 @@ var ramlParser = require('raml-parser');
 // projectDescription     | raml:documentation.content | {projectTitle} RAML API description and Schema validations.
 // baseUri                | raml:baseUri               | https://{projectName}.example.com/{version}
 // version                | raml.version               | v1
-// apiVersion             | pkg:version                | 1.0.0
-// authorName             | pkg:author.name            |
-// authorEmail            | pkg:author.email           |
-// authorUrl              | pkg.author.url             |
-// repositoryType         | pkg.repository.type        | github
-// repositoryUrl          | pkg.repository.type        |
-// projectHomePage        | pkg.homepage               | (derived from repository URL if git/github)
-// projectIssueTrackerUrl | pkg.bugs.url               | (derived from repository URL if git/github)
-// license                | pkg.license                | See LICENSE in LICENSE
 // ramlFile               | raml file                  | {projectName}-{version}
 
 function titleize(s) {
@@ -74,6 +64,7 @@ function readRamlFile(defs, callback) {
     ramlParser.loadFile(defs.ramlFile).then(function (raml) {
       if (raml.title) {
         defs.projectTitle = raml.title;
+        defs.projectName = _.kebabCase(raml.title);
       }
       if (raml.documentation) {
         if (raml.documentation.length > 0) {
@@ -97,46 +88,6 @@ function readRamlFile(defs, callback) {
   }
 }
 
-function readPackageFile(defs, callback) {
-  if (this.fs.exists('./package.json')) {
-    var pkg = this.fs.readJSON('package.json');
-    if (pkg.author) {
-      if (pkg.author.name) {
-        defs.authorName = pkg.author.name;
-      }
-      if (pkg.author.email) {
-        defs.authorEmail = pkg.author.email;
-      }
-      if (pkg.author.url) {
-        defs.authorUrl = pkg.author.url;
-      }
-    }
-    if (pkg.repository) {
-      if (pkg.repository.type) {
-        defs.repositoryType = pkg.repository.type;
-      }
-      if (pkg.repository.url) {
-        defs.repositoryUrl = pkg.repository.url;
-      }
-    }
-    if (pkg.homepage) {
-      defs.projectHomePage = pkg.homepage;
-    }
-    if (pkg.bugs && pkg.bugs.url) {
-      defs.projectIssueTrackerUrl = pkg.bugs.url;
-    }
-    if (pkg.license) {
-      defs.license = pkg.license;
-    }
-    if (pkg.version) {
-      defs.version = pkg.version;
-    }
-    this._pkg = pkg;
-  }
-
-  callback(null, defs);
-}
-
 module.exports = yeoman.generators.Base.extend({
 
   constructor: function () {
@@ -148,8 +99,7 @@ module.exports = yeoman.generators.Base.extend({
     var defs = {},
       processDefs = async.seq(
         scanForRamlFile,
-        readRamlFile,
-        readPackageFile.bind(this));
+        readRamlFile);
 
     processDefs(defs, function (err, results) {
       if (err) {
@@ -164,9 +114,9 @@ module.exports = yeoman.generators.Base.extend({
   _getPrompts: function (defs) {
     return [
       _input('projectTitle', 'What is the title of your API? (example: "Widget Warehouse")',
-        defs, titleize(this.appname)),
+        defs, defs.projectTitle || titleize(this.appname)),
       _input('projectName', 'What is the name of your API? (example: "widget-warehouse")',
-        defs, _.kebabCase(this.appname), {
+        defs, defs.projectName || _.kebabCase(this.appname), {
           validate: function (input) {
             if (input.match(/\w+(\-\w+)*/)) {
               return true;
@@ -177,72 +127,24 @@ module.exports = yeoman.generators.Base.extend({
       _input('projectDescription', 'Describe the API.',
         defs, null, {
           default: function (answers) {
-            return answers.projectTitle + ' RAML API description and Schema validations.';
+            return defs.projectDescription || answers.projectTitle + ' RAML API description and Schema validations.';
           }
         }),
-      _input('version', 'What semantic version do you want to use?',
-        defs, '1.0.0', {
+      _input('version', 'What version do you want to use?',
+        defs, defs.version || 'v1', {
           validate: function (input) {
-            if (input.match(/(\d+)\.(\d+)\.(\d+)/)) {
+            if (input.match(/v?(\d+(\.\d+){0,2})/)) {
               return true;
             }
-            return 'Semantic versions are of the form 1.2.3';
-          }
-        }),
-      _input('apiVersion', 'What API version do you want to use?',
-        defs, 'v1', {
-          validate: function (input) {
-            if (input.match(/v?(\d+)(\.(\d+))?/)) {
-              return true;
-            }
-            return 'Valid versions are: v1, v2.2, 3, 4.21';
+            return 'Versions are of the form: v1, 1, 2.1, v2.1, 3.3.3';
           }
         }),
       _input('baseUri', 'What is the API\'s baseUri?',
         defs, null, {
           default: function (answers) {
-            return 'https://' + answers.projectName + '.example.com';
+            return defs.baseUri || 'https://' + answers.projectName + '.example.com';
           }
-        }),
-      _input('authorName', 'What is your full name?', defs),
-      _input('authorEmail', 'What is your email address?', defs),
-      _input('authorUrl', 'What is your home or work URL?', defs),
-      _input('repositoryType', 'What type of repository is this project stored in?',
-        defs, null, {
-          type: 'list',
-          choices: ['github', 'git', 'svn', 'bitbucket']
-        }),
-      _input('repositoryUrl', 'What is the repository URL for this project?', defs),
-      _input('projectHomePage', 'What is the home page URL for this project?', defs, null, {
-        default: function (answers) {
-          if (!answers.repositoryType || !answers.repositoryUrl) {
-            return null;
-          }
-          if (answers.repositoryType === 'github' || answers.repositoryType === 'git') {
-            if (answers.repositoryUrl.indexOf('http') === 0) {
-              return path.dirname(answers.repositoryUrl) + '/' +
-                path.basename(answers.repositoryUrl, '.git');
-            }
-          }
-          return null;
-        }
-      }),
-      _input('projectIssueTrackerUrl', 'What is the URL for the issue tracker for this project?', defs, null, {
-        default: function (answers) {
-          if (answers.repositoryType === 'github' || answers.repositoryType === 'git') {
-            if (answers.projectHomePage && answers.projectHomePage.indexOf('http') === 0) {
-              return answers.projectHomePage + '/issues';
-            }
-          }
-          return null;
-        }
-      }),
-      _input('license', 'What is the license for this project?',
-        defs, 'Apache-2.0', {
-          type: 'list',
-          choices: ['Apache-2.0', 'GFDL-1.3', 'MIT', 'SEE LICENSE IN LICENSE']
-        })
-    ];
+        })];
   },
 
   prompting: function () {
@@ -271,7 +173,7 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   configuring: function () {
-    this.props.mainRamlFile = this.props.mainRamlFile || this.props.projectName + '-' + this.props.apiVersion + '.raml';
+    this.props.mainRamlFile = this.props.mainRamlFile || this.props.projectName + '-' + this.props.version + '.raml';
     this.config.save();
   },
 
@@ -283,34 +185,13 @@ module.exports = yeoman.generators.Base.extend({
       this._pkg.description = this.props.projectDescription;
     }
     if (!this._pkg.hasOwnProperty('version')) {
-      this._pkg.version = this.props.version;
-    }
-    this._pkg.author = this._pkg.author || {};
-    if (!this._pkg.author.hasOwnProperty('name')) {
-      this._pkg.author.name = this.props.authorName;
-    }
-    if (!this._pkg.author.hasOwnProperty('email')) {
-      this._pkg.author.email = this.props.authorEmail;
-    }
-    if (!this._pkg.author.hasOwnProperty('url')) {
-      this._pkg.author.url = this.props.authorUrl;
-    }
-    if (!this._pkg.hasOwnProperty('homepage')) {
-      this._pkg.homepage = this.props.homepage;
-    }
-    this._pkg.bugs = this._pkg.bugs || {};
-    if (!this._pkg.bugs.hasOwnProperty('url')) {
-      this._pkg.bugs.url = this.props.projectIssueTrackerUrl;
-    }
-    if (!this._pkg.hasOwnProperty('license')) {
-      this._pkg.license = this.props.license;
-    }
-    this._pkg.repository = this._pkg.repository || {};
-    if (!this._pkg.repository.hasOwnProperty('type')) {
-      this._pkg.repository.type = this.props.repositoryType;
-    }
-    if (!this._pkg.repository.hasOwnProperty('url')) {
-      this._pkg.repository.url = this.props.repositoryUrl;
+      var re = new RegExp(/v?(\d+)(\.\d+)?(\.\d+)?/);
+      var match = re.exec(this.props.version);
+      if (!match) {
+        this._pkg.version = '1.0.0';
+      } else {
+        this._pkg.version = [match[1], match[2] || '.0', match[3] || '.0'].join('');
+      }
     }
     if (!this._pkg.hasOwnProperty('private')) {
       this._pkg.private = this.props.true;
@@ -338,7 +219,7 @@ module.exports = yeoman.generators.Base.extend({
 
   writing: function () {
     this._writePackageJson();
-    ['_.gitignore', '_.editorconfig', '_LICENSE', '_README.md', '_gulpfile.js'].forEach(function (tplPath) {
+    ['_.gitignore', '_.editorconfig', '_README.md', '_gulpfile.js'].forEach(function (tplPath) {
       this.fs.copyTpl(
         this.templatePath(tplPath),
         this.destinationPath(tplPath.substr(1)),

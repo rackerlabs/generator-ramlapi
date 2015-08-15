@@ -3,9 +3,8 @@
 var gulp = require('gulp');
 var path = require('path');
 var jsonlint = require('gulp-jsonlint');
-// var watch = require('gulp-watch');
 var gulpFilter = require('gulp-filter');
-var debug = require('gulp-debug');
+// var debug = require('gulp-debug');
 
 var ramllint = require('./lib/gulp-ramllint');
 var deref = require('./lib/deref-raml-schema.js');
@@ -32,7 +31,6 @@ gulp.task('apidoc', function () {
     schemaFolder = path.resolve(process.cwd(), 'schema');
 
   return gulp.src(API_SPEC)
-    // .pipe(watch(['*.raml', 'raml/**/*.raml', 'common-raml/**/*.raml', 'examples/**/*.json', 'schema/**/*.json', 'templates/*.nunjucks']))
     .pipe(gulpFilter(API_SPEC))
     .pipe(ramllint())
     .pipe(ramllint.reporter())
@@ -51,7 +49,6 @@ gulp.task('apidoc', function () {
 
 gulp.task('jsonlint', function () {
   gulp.src(['./examples/**/*.json', './schema/**/*.json'])
-  // .pipe(watch(['./examples/**/*.json', './schema/**/*.json']))
   .pipe(jsonlint())
     .pipe(jsonlint.reporter());
 });
