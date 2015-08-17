@@ -61,29 +61,32 @@ function derefRamlSchemaFunc(schemaFolder) {
     var raml, stream = this, fail = function (message) {
       return done(new gutil.PluginError('deref-raml-schema', message, {showStack: true}));
     };
-    if (file.isBuffer()) {
-      try {
-        raml = JSON.parse(file.contents.toString(enc));
-      } catch(err) {
-        fail(err);
-      }
-      derefSchemas(raml, schemaFolder, function (err, raml) {
-        if (err) {
-          return fail(err);
-        }
-        stream.push(new gutil.File({
-          base: file.base,
-          cwd: file.cwd,
-          path: file.path,
-          contents: new Buffer(JSON.stringify(raml))
-        }));
-        done();
-      });
-    } else if (file.isStream()) {
-      fail('Streams are not supported: ' + file.inspect());
+
+    if (file.isStream()) {
+      return fail('Streams are not supported: ' + file.inspect());
     } else if (file.isNull()) {
-      fail('Input file is null: ' + file.inspect());
+      return fail('Input file is null: ' + file.inspect());
+    } else if (!file.isBuffer()) {
+      return fail('Expected a buffer: ' + file.inspect());
     }
+
+    try {
+      raml = JSON.parse(file.contents.toString(enc));
+    } catch(err) {
+      fail(err);
+    }
+    derefSchemas(raml, schemaFolder, function (err, raml) {
+      if (err) {
+        return fail(err);
+      }
+      stream.push(new gutil.File({
+        base: file.base,
+        cwd: file.cwd,
+        path: file.path,
+        contents: new Buffer(JSON.stringify(raml))
+      }));
+      done();
+    });
   };
 }
 

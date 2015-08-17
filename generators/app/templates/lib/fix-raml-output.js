@@ -56,7 +56,7 @@ function fixRamlOutput() {
   var stream = through2.obj(function (file, enc, done) {
     var ramlObj,
       fail = function (message) {
-        done(new gutil.PluginError('fix-raml-output', message));
+        return done(new gutil.PluginError('fix-raml-output', message));
       };
 
     if (file.isStream()) {

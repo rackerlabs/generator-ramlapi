@@ -86,16 +86,19 @@ function jsonToRamlStruct() {
     var fail = function (message) {
       done(new gutil.PluginError('json-to-raml-struct', message));
     };
-    if (file.isBuffer()) {
-      if (extname(file) === '.raml') {
-        doWorkFromRaml(stream, file, enc, done);
-      } else { // json
-        doWorkFromJson(stream, file, enc, done);
-      }
-    } else if (file.isStream()) {
-      fail('Streams are not supported: ' + file.inspect());
+
+    if (file.isStream()) {
+      return fail('Streams are not supported: ' + file.inspect());
     } else if (file.isNull()) {
-      fail('Input file is null: ' + file.inspect());
+      return fail('Input file is null: ' + file.inspect());
+    } else if (!file.isBuffer()) {
+      return fail('Expected a buffer: ' + file.inspect());
+    }
+
+    if (extname(file) === '.raml') {
+      doWorkFromRaml(stream, file, enc, done);
+    } else { // json
+      doWorkFromJson(stream, file, enc, done);
     }
   });
 

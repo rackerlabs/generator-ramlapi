@@ -25,7 +25,6 @@ describe('ramlapi:app', function () {
       'package.json',
       '.editorconfig',
       '.gitignore',
-      'LICENSE',
       'README.md',
       'templates/item.nunjucks',
       'templates/resource.nunjucks',

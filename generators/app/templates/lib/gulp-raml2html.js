@@ -46,36 +46,38 @@ function gulpRaml2Html(options) {
 
   var stream = through2.obj(function (file, enc, done) {
     var fail = function (message) {
-      done(new gutil.PluginError('raml2html', message));
+      return done(new gutil.PluginError('raml2html', message));
     };
-    if (file.isBuffer()) {
-      var cwd = process.cwd();
-      process.chdir(path.resolve(path.dirname(file.path)));
-      raml2html.render(file.contents, options.config).then(
-        function (output) {
-          process.chdir(cwd);
-          stream.push(new gutil.File({
-            base: file.base,
-            cwd: file.cwd,
-            path: gutil.replaceExtension(file.path, options.extension),
-            contents: new Buffer(output)
-          }));
-          done();
-        },
-        function (error) {
-          process.chdir(cwd);
-          simplifyMark(error.context_mark);
-          simplifyMark(error.problem_mark);
-          process.nextTick(function () {
-            fail(JSON.stringify(error, null, 2));
-          });
+
+    if (file.isStream()) {
+      return fail('Streams are not supported: ' + file.inspect());
+    } else if (file.isNull()) {
+      return fail('Input file is null: ' + file.inspect());
+    } else if (!file.isBuffer()) {
+      return fail('Expected a buffer: ' + file.inspect());
+    }
+
+    var cwd = process.cwd();
+    process.chdir(path.resolve(path.dirname(file.path)));
+    raml2html.render(file.contents, options.config).then(
+      function (output) {
+        process.chdir(cwd);
+        stream.push(new gutil.File({
+          base: file.base,
+          cwd: file.cwd,
+          path: gutil.replaceExtension(file.path, options.extension),
+          contents: new Buffer(output)
+        }));
+        done();
+      },
+      function (error) {
+        process.chdir(cwd);
+        simplifyMark(error.context_mark);
+        simplifyMark(error.problem_mark);
+        process.nextTick(function () {
+          fail(JSON.stringify(error, null, 2));
         });
-    } else if (file.isStream()) {
-      fail('Streams are not supported: ' + file.inspect());
-    }
-    else if (file.isNull()) {
-      fail('Input file is null: ' + file.inspect());
-    }
+      });
   });
 
   return stream;
