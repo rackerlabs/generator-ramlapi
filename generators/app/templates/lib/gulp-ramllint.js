@@ -1,12 +1,15 @@
 'use strict';
 
-var mapStream = require('map-stream');
-var gutil = require('gulp-util');
-var c = gutil.colors;
-var Linter = require('ramllint');
-var linter = new Linter();
-var through = require('through2');
-var PluginError = require('gulp-util').PluginError;
+var mapStream = require('map-stream'),
+  gutil = require('gulp-util'),
+  c = gutil.colors,
+  Linter = require('ramllint'),
+  options = {
+    'url_lower': '^\\/([a-z]+(-[a-z]+)*|{[a-z]+([A-Z][a-z]+)*})$'
+  },
+  linter = new Linter(options),
+  through = require('through2'),
+  PluginError = require('gulp-util').PluginError;
 
 var STATUS = {
   'error': gutil.colors.red,

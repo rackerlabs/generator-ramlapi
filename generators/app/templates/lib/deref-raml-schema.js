@@ -5,6 +5,19 @@ var jsrp = require('json-schema-ref-parser');
 var traverse = require('traverse');
 var through2 = require('through2');
 var gutil = require('gulp-util');
+var path = require('path');
+var fs = require('fs');
+
+function reportError(message, context, err) {
+  var msg = message || 'Error';
+  if (context) {
+    msg += ' at path: [' + context.path.join('/') + ']';
+  }
+  if (err) {
+    msg += ' ' + err.toString();
+  }
+  return new gutil.PluginError('deref-raml-schema', msg);
+}
 
 function reportTaskError(err) {
   if (err) {
@@ -13,41 +26,51 @@ function reportTaskError(err) {
 }
 
 function dereferenceSchema(task, cb) {
-  task.parser.dereference(task.schema, function (err, schema) {
+  var json,
+    schemaPath,
+    schema = task.schema,
+    paramRe = /<<[^>]+>>/;
+
+  if (paramRe.test(schema)) {
+    return cb();
+  }
+
+  schemaPath = path.resolve(task.baseFolder, schema);
+  if (fs.existsSync(schemaPath)) {
+    schema = fs.readFileSync(schemaPath, task.enc);
+  }
+
+  try {
+    json = JSON.parse(schema);
+  } catch (err) {
+    return cb(reportError('Unable to parse schema', this, err));
+  }
+
+  new jsrp().dereference(json, function (err, schema) {
     if (err) {
-      return cb(err);
+      return cb(reportError('Dereference Error', task.context, err));
     }
     task.context.update(JSON.stringify(schema, null, '  '));
     cb();
   });
 }
 
-function derefSchemas(obj, schemaFolder, cb) {
+function derefSchemas(obj, baseFolder, schemaFolder, cb) {
   var q = async.queue(dereferenceSchema),
-    refParser = new jsrp(),
-    previousDir = process.cwd(),
-    paramRe = /<<[^>]+>>/,
-    json;
+    previousDir = process.cwd();
 
+  // I don't like changing the process working dir but the deref library
+  // only looks for schema in the cwd.
   process.chdir(schemaFolder);
 
   traverse(obj).forEach(function (x) {
     if (this.isLeaf && (this.key === 'schema' ||
       (this.parent && this.parent.parent && this.parent.parent.key === 'schemas'))) {
-      if (!paramRe.test(x)) {
-        try {
-          json = JSON.parse(x);
-          q.push({
-            schema: json,
-            context: this,
-            parser: refParser
-          }, reportTaskError);
-        } catch (err) {
-          gutil.log('Error!', this.path.join('/'), err, '\n', x);
-
-          cb(new gutil.PluginError('deref-raml-schema', 'Unable to parse schema at path ' + this.path.join('/') + ' ' + err));
-        }
-      }
+      q.push({
+        schema: x,
+        context: this,
+        baseFolder: baseFolder
+      }, reportTaskError);
     }
   });
   q.drain = function () {
@@ -58,8 +81,8 @@ function derefSchemas(obj, schemaFolder, cb) {
 
 function derefRamlSchemaFunc(schemaFolder) {
   return function (file, enc, done) {
-    var raml, stream = this, fail = function (message) {
-      return done(new gutil.PluginError('deref-raml-schema', message, {showStack: true}));
+    var raml, stream = this, fail = function (message, err) {
+      return done(reportError(message, null, err));
     };
 
     if (file.isStream()) {
@@ -73,9 +96,9 @@ function derefRamlSchemaFunc(schemaFolder) {
     try {
       raml = JSON.parse(file.contents.toString(enc));
     } catch(err) {
-      fail(err);
+      fail('Error parsing RAML', err);
     }
-    derefSchemas(raml, schemaFolder, function (err, raml) {
+    derefSchemas(raml, file.cwd, schemaFolder, function (err, raml) {
       if (err) {
         return fail(err);
       }

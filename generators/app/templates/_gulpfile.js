@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var path = require('path');
 var jsonlint = require('gulp-jsonlint');
 var gulpFilter = require('gulp-filter');
-// var debug = require('gulp-debug');
+var plumber = require('gulp-plumber');
 
 var ramllint = require('./lib/gulp-ramllint');
 var deref = require('./lib/deref-raml-schema.js');
@@ -21,16 +21,12 @@ var RAML2HTML_OPTIONS = {
   templatesPath: 'templates'
 };
 
-function handleError(err) {
-  console.error(err.toString());
-  this.emit('end');
-}
-
 gulp.task('apidoc', function () {
   var rename = require('gulp-rename'),
     schemaFolder = path.resolve(process.cwd(), 'schema');
 
   return gulp.src(API_SPEC)
+    .pipe(plumber())
     .pipe(gulpFilter(API_SPEC))
     .pipe(ramllint())
     .pipe(ramllint.reporter())
@@ -40,7 +36,6 @@ gulp.task('apidoc', function () {
     .pipe(validateExamples.reporter())
     .pipe(fixRamlOutput())
     .pipe(raml2html(RAML2HTML_OPTIONS))
-    .on('error', handleError)
     .pipe(rename({
       extname: '.html'
     }))

@@ -202,6 +202,7 @@ module.exports = yeoman.generators.Base.extend({
     this._pkg.dependencies['gulp-debug'] = '^2.0.1';
     this._pkg.dependencies['gulp-filter'] = '^3.0.0';
     this._pkg.dependencies['gulp-jsonlint'] = '^1.1.0';
+    this._pkg.dependencies['gulp-plumber'] = '^1.0.1';
     this._pkg.dependencies['gulp-rename'] = '^1.2.2';
     this._pkg.dependencies['gulp-util'] = '^3.0.6';
     this._pkg.dependencies['gulp-watch'] = '^4.3.4';

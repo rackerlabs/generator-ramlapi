@@ -23,6 +23,12 @@ describe('deref-raml-schema', function () {
         // Code under test
         var th2 = derefRamlSchema(schemaFolder);
 
+        th2.on('error', function (err) {
+          console.log('caught an error');
+          assert.fail(err);
+          done(err);
+        });
+
         // Test response to data written onto stream
         th2.on('data', function (actual) {
           var ramlObj = JSON.parse(actual.contents.toString()),
