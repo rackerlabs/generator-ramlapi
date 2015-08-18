@@ -19,12 +19,6 @@ function reportError(message, context, err) {
   return new gutil.PluginError('deref-raml-schema', msg);
 }
 
-function reportTaskError(err) {
-  if (err) {
-    gutil.log('Task Error: ', err);
-  }
-}
-
 function dereferenceSchema(task, cb) {
   var json,
     schemaPath,
@@ -70,7 +64,7 @@ function derefSchemas(obj, baseFolder, schemaFolder, cb) {
         schema: x,
         context: this,
         baseFolder: baseFolder
-      }, reportTaskError);
+      });
     }
   });
   q.drain = function () {

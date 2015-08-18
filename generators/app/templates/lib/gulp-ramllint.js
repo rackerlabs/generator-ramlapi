@@ -17,6 +17,17 @@ var STATUS = {
   'warning': gutil.colors.yellow
 };
 
+function reportError(message, context, err) {
+  var msg = message || 'Error';
+  if (context) {
+    msg += ' at path: [' + context.path.join('/') + ']';
+  }
+  if (err) {
+    msg += ' ' + err.toString();
+  }
+  return new gutil.PluginError('ramllint', msg);
+}
+
 var formatOutput = function (results) {
   var errResults = {
       'error': 0,
@@ -50,8 +61,6 @@ var ramlLintPlugin = function (options) {
   options = options || {};
 
   return mapStream(function (file, cb) {
-    var errorMessage = '';
-
     try {
       linter.lint(String(file.contents), function () {
         file.ramllint = formatOutput(linter.results());
@@ -59,7 +68,7 @@ var ramlLintPlugin = function (options) {
         cb(null, file);
       });
     } catch (err) {
-      errorMessage = err.message;
+      cb(reportError('Error linting ' + file.name, null, err));
     }
   });
 };

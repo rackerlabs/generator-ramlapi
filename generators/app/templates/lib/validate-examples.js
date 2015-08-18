@@ -10,6 +10,17 @@ var traverse = require('traverse');
 
 var matches = [];
 
+function reportError(message, context, err) {
+  var msg = message || 'Error';
+  if (context) {
+    msg += ' at path: [' + context.path.join('/') + ']';
+  }
+  if (err) {
+    msg += ' ' + err.toString();
+  }
+  return new gutil.PluginError('validate-examples', msg);
+}
+
 function isBodyPath(pathAry) {
   return pathAry.some(function (cv) {
     return cv === 'body';
@@ -48,10 +59,10 @@ function validateSchemaExample(schema, example) {
   }
 }
 
+// TODO: Clean this up - this is horrible
 function lookForExamples(ramlObj) {
   matches = [];
   traverse(ramlObj).forEach(function (x) {
-
     if (this.key === 'schema') {
       // Look for a matching example
       if (this.parent.node.example) {
@@ -101,16 +112,15 @@ var validateExamplesPlugin = function (options) {
 
     try {
       ramlObj = JSON.parse(String(file.contents));
-      lookForExamples(ramlObj);
     } catch (err) {
-      cb(new PluginError(
-        'validate-examples', {
-          name: 'validateExamplesPlugin',
-          filename: file.path,
-          message: err,
-        }
-      ));
-      errorMessage = err.message;
+      return cb(reportError('Error parsing RAML', null, err));
+    }
+
+    try {
+      lookForExamples(ramlObj);
+    } catch(err) {
+      errorMessage = err.toString();
+      cb(reportError('Error validating examples', null, err));
     }
     file.validateExamples = formatOutput(errorMessage);
 
