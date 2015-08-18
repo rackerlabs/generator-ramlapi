@@ -6,6 +6,17 @@ var traverse = require('traverse');
 var path = require('path');
 var ramlparser = require('raml-parser');
 
+function reportError(message, context, err) {
+  var msg = message || 'Error';
+  if (context) {
+    msg += ' at path: [' + context.path.join('/') + ']';
+  }
+  if (err) {
+    msg += ' ' + err.toString();
+  }
+  return new gutil.PluginError('json-to-raml-struct', msg);
+}
+
 function resourceTransfer(item, collectionParentPath, traverseObj) {
   var relativeUri = item.relativeUri;
   delete item.relativeUri;
@@ -42,7 +53,7 @@ function fix(obj, targetElement, itemTransfer, cb) {
       delete collectionParent[targetElement];
     });
   } catch (err) {
-    cb(new gutil.Error('Error in fixMethods', err));
+    cb(reportError('Error in fixMethods', null, err));
   }
   cb(null, obj);
 }
@@ -72,7 +83,7 @@ function doWorkFromRaml(stream, file, enc, done) {
   ramlparser.load(file.contents.toString(enc)).then(function (ramlObj) {
     correctRamlStructure(stream, file, ramlObj, done);
   }, function (error) {
-    done(new gutil.Error('Error parsing RAML', error));
+    done(reportError('Error parsing RAML', null, error));
   });
 }
 
@@ -84,7 +95,7 @@ function doWorkFromJson(stream, file, enc, done) {
 function jsonToRamlStruct() {
   var stream = through2.obj(function (file, enc, done) {
     var fail = function (message) {
-      done(new gutil.PluginError('json-to-raml-struct', message));
+      done(reportError(message));
     };
 
     if (file.isStream()) {

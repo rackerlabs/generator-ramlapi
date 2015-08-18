@@ -30,7 +30,7 @@ function ramlParserFunc(file, enc, callback) {
   }
 
   ramlParser.load(file.contents.toString(enc))
-    .then(function (raml) {
+    .then(function () {
       stream.push(new gutil.File({
         base: file.base,
         cwd: file.cwd,
