@@ -38,12 +38,11 @@ function isNewPath(pathAry) {
   return true;
 }
 
-function validateSchemaExample(schema, example) {
+function validateSchemaExample(schema, example, path) {
   var paramRe = /<<[^>]+>>/;
   if (paramRe.test(schema) || paramRe.test(example)) {
     return;
   }
-
   var result = tv4.validateMultiple(JSON.parse(example), JSON.parse(schema));
   if (result.missing.length > 0) {
     gutil.log('Missing Schemas: ', JSON.stringify(result.missing, null, '  '));
@@ -52,8 +51,9 @@ function validateSchemaExample(schema, example) {
     throw new Error(result.errors.map(function (error) {
       return [
         error.message,
-        'at Example path: ' + error.dataPath,
-        'Schema path: ' + error.schemaPath
+        'at Example path: ' + path,
+        'Schema path: ' + error.schemaPath,
+        'example:\n' + example
       ].join('\n');
     }).join('\n\n'));
   }
@@ -67,7 +67,7 @@ function lookForExamples(ramlObj) {
       // Look for a matching example
       if (this.parent.node.example) {
         if (isNewPath(this.parent.path)) {
-          validateSchemaExample(x, this.parent.node.example);
+          validateSchemaExample(x, this.parent.node.example, this.parent.path);
         }
       } else {
         if (isNewPath(this.parent.path)) {
@@ -79,7 +79,7 @@ function lookForExamples(ramlObj) {
       if (isBodyPath(this.path)) {
         if (this.parent.node.schema) {
           if (isNewPath(this.parent.path)) {
-            validateSchemaExample(this.parent.node.schema, x);
+            validateSchemaExample(this.parent.node.schema, x, this.parent.path);
           }
         } else {
           if (isNewPath(this.parent.path)) {
