@@ -14,6 +14,13 @@ See also:
 * [Generator-RAMLAPI Home Page](http://www.markmorga.com/generator-ramlapi)
 * [API Docs](http://www.markmorga.com/generator-ramlapi/generator-ramlapi/0.2.4/index)
 
+[![NPM](https://nodei.co/npm/generator-ramlapi.png)](https://npmjs.org/package/generator-ramlapi)
+
+[![Build Status](https://travis-ci.org/mmorga/generator-ramlapi.svg?branch=master)](https://travis-ci.org/mmorga/generator-ramlapi)
+[![Dependency Status](https://david-dm.org/mmorga/generator-ramlapi.svg)](https://david-dm.org/mmorga/generator-ramlapi)
+[![Codacy Badge](http://api.codacy.com:80/project/badge/0f44e2c1d52e418fb9a36cc9dacfef21)](https://www.codacy.com/app/markmorga/generator-ramlapi)
+
+
 ## Getting Started:
 
 *Installing Dependencies*
