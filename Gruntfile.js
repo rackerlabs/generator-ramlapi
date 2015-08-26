@@ -7,7 +7,8 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
       options: {
-        jshintrc: '.jshintrc'
+        jshintrc: '.jshintrc',
+        force: true // force to continue even with errors.
       },
       all: ['Gruntfile.js', 'generators/**/*.js', 'test/**/*.js']
     },
@@ -29,6 +30,17 @@ module.exports = function (grunt) {
         spawn: false,
       },
     },
+    jsdoc: {
+      dist: {
+        options: {
+          destination: 'docs',
+          package: 'package.json',
+          readme: 'README.md',
+          // private: true
+        },
+        src: ['generators/app/index.js', 'generators/app/templates/lib/*.js']
+      }
+    }
   });
 
   var defaultTestSrc = grunt.config('mochaTest.test.src');
@@ -43,7 +55,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-jsdoc');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'mochaTest']);
+  grunt.registerTask('default', ['jshint', 'jsdoc', 'mochaTest']);
 };

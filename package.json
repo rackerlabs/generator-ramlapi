@@ -32,6 +32,7 @@
     "grunt": "^0.4.5",
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-jsdoc": "^0.6.8",
     "grunt-mocha-test": "^0.12.7",
     "gulp-plumber": "^1.0.1",
     "gulp-util": "^3.0.6",
@@ -39,7 +40,7 @@
     "json-schema-ref-parser": "^1.0.0-alpha.10",
     "map-stream": "0.0.6",
     "mocha": "*",
-    "ramllint": "^1.2.2",
+    "ramllint": "https://github.com/mmorga/ramllint.git#a4f8eac52a5be139a4801e4df5fd9929decb89dd",
     "through2": "^2.0.0",
     "traverse": "^0.6.6",
     "tv4": "^1.2.3"

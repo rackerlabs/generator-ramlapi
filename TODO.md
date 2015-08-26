@@ -24,6 +24,8 @@ Once a project is established...
 * [X] Process the RAML into HTML docs (include schemas, examples, etc.)
 * [ ] Publish to github pages
 * [ ] See about adding additional ramllint rules here
+* [ ] Add js docs to source
+* [ ] Add custom rules to ramllint
 
 Values:
 

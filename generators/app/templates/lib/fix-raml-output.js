@@ -4,11 +4,16 @@ var through2 = require('through2');
 var gutil = require('gulp-util');
 var yaml = require('js-yaml');
 
-// This method transforms string scalar values in a RAML (YAML) file
-// to use the "|" style markup instead of the ">" style markup since
-// the RAML Parser doesn't use the js YAML parser and doesn't support
-// that style of string scalar.
-function fixupRaml(raml) {
+/** This method transforms string scalar values in a RAML (YAML) file
+ * to use the "|" style markup instead of the ">" style markup since
+ * the RAML Parser doesn't use the js YAML parser and doesn't support
+ * that style of string scalar.
+ *
+ * @private
+ * @param {string} raml
+ * @returns {string} transformed raml source
+ */
+function convertFoldingStyleToLiteralStyle(raml) {
   var inFoldSection = false,
     badEndRe = /: *>(-|\++)?$/,
     sectionIndent = -1,
@@ -52,6 +57,17 @@ function fixupRaml(raml) {
   return result;
 }
 
+/**
+ * Takes in the JSON RAML representation from the stream file buffer,
+ * dumps it as YAML and converts any folded style blocks to
+ * literal style blocks because raml-parser (used by other tools)
+ * doesn't understand folding style blocks (indicated with a '>' in YAML)
+ *
+ * Result is written back to the stream as the converted RAML source.
+ *
+ * @see YAML 1.2 Literal Style {@link http://www.yaml.org/spec/1.2/spec.html#id2795688}
+ * @see YAML 1.2 Folded Style {@link http://www.yaml.org/spec/1.2/spec.html#id2796251}
+ */
 function fixRamlOutput() {
   var stream = through2.obj(function (file, enc, done) {
     var ramlObj,
@@ -68,7 +84,7 @@ function fixRamlOutput() {
     }
 
     ramlObj = JSON.parse(file.contents.toString(enc));
-    ramlObj = fixupRaml('#%RAML 0.8\n---\n' + yaml.dump(ramlObj));
+    ramlObj = convertFoldingStyleToLiteralStyle('#%RAML 0.8\n---\n' + yaml.dump(ramlObj));
     stream.push(new gutil.File({
       base: file.base,
       cwd: file.cwd,
