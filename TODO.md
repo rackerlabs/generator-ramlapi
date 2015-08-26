@@ -26,6 +26,8 @@ Once a project is established...
 * [ ] See about adding additional ramllint rules here
 * [ ] Add js docs to source
 * [ ] Add custom rules to ramllint
+* [ ] Pull set of dependencies in the yeoman script from the generator's package.json devDependencies
+* [ ] Update the list of API docs directories in docs/ to prevent broken links
 
 Values:
 
