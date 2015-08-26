@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Generator-RAMLAPI by mmorga</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Generator-RAMLAPI</h1>
+      <h2 class="project-tagline">A Yeoman Generator to produce RAML API projects</h2>
+      <a href="https://github.com/mmorga/generator-ramlapi" class="btn">View on GitHub</a>
+      <a href="https://github.com/mmorga/generator-ramlapi/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/mmorga/generator-ramlapi/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="generator-ramlapi" class="anchor" href="#generator-ramlapi" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generator-RAMLAPI</h1>
+
+<p><code>generator-ramlapi</code> is a generator for <a href="http://yeoman.io">Yeoman</a> that generates a project scaffold for API development in RAML and JSON Schema.</p>
+
+<p><em>Features</em></p>
+
+<ul>
+<li>RAML validation</li>
+<li>RAML HTML document generation (via RAML2HTML) with improved HTML templates</li>
+<li>JSON Schema validation</li>
+<li>Example validation against JSON Schema</li>
+</ul>
+
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started:</h2>
+
+<p><em>Installing Dependencies</em></p>
+
+<p>Install <a href="https://nodejs.org/download/">NodeJS</a>. On OSX, installation via <a href="https://www.npmjs.com/package/nvm">NVM</a> and/or <a href="brew.sh">Homebrew</a> is highly recommended.</p>
+
+<p>Update <a href="https://www.npmjs.com">NPM</a>. Depending on your installation, you may need to use <code>sudo</code> for the following commands.</p>
+
+<div class="highlight highlight-bash"><pre>npm install -g npm</pre></div>
+
+<p>Install Yeoman, <a href="gulpjs.com">Gulp</a> and generator-ramlapi:</p>
+
+<div class="highlight highlight-bash"><pre>npm install -g yo gulp generator-ramlapi</pre></div>
+
+<h2>
+<a id="beginning-a-project" class="anchor" href="#beginning-a-project" aria-hidden="true"><span class="octicon octicon-link"></span></a>Beginning a project</h2>
+
+<p>Create a directory for your RAML API project and <code>cd</code> into it.</p>
+
+<p>Run the generator like this:</p>
+
+<div class="highlight highlight-bash"><pre>yo ramlapi</pre></div>
+
+<p>The generator will ask you a number of questions. Answer these as completely as you can, but all can be changed later if need be.</p>
+
+<p>After the questions, the generator will install the NPM dependencies for your project.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>To run the validation and build HTML docs, simply run the command:</p>
+
+<div class="highlight highlight-bash"><pre>gulp</pre></div>
+
+<p>Validates the JSON Schema, RAML, and produces documentation in the <code>public/</code> directory.</p>
+
+<h3>
+<a id="project-structure" class="anchor" href="#project-structure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Structure</h3>
+
+<ul>
+<li>
+<em>`</em>.raml`*: files located in the root directory are documented.</li>
+<li>
+<em><code>raml/</code></em>: RAML fragment files referenced by the primary RAML.</li>
+<li>
+<em><code>schema/</code></em>: JSON Schema files referenced in RAML files (or fragments).</li>
+<li>
+<em><code>examples/</code></em>: JSON example files for the JSON Schema.</li>
+<li>
+<em><code>public/</code></em>: a folder suitable to publish to a GitHub project page with generated documentation.</li>
+<li>
+<em><code>templates/</code></em>: contains the RAML2HTML templates that are used instead of the default templates.</li>
+</ul>
+
+<h3>
+<a id="raml-notes" class="anchor" href="#raml-notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>RAML Notes</h3>
+
+<p>RAML files should not include JSON Schema directly, but should instead use <code>!include</code> to include them from the <code>schema/</code> directory. This isn't essential - just a best practice.</p>
+
+<p><a href="https://github.com/kevinrenskers/raml2html">raml2html</a> is used to generate the documentation HTML.</p>
+
+<h3>
+<a id="schema-notes" class="anchor" href="#schema-notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Schema Notes</h3>
+
+<p>Schema files are expected to be stored in the <code>schema/</code> directory.</p>
+
+<p>Example files are stored in the <code>examples/</code> directory.</p>
+
+<p>Example files that are included in a RAML media type section with a schema are validated against that schema.</p>
+
+<h2>
+<a id="generator-improvements-to-come" class="anchor" href="#generator-improvements-to-come" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generator improvements to come</h2>
+
+<ol>
+<li>scaffold the github page</li>
+<li>gulp-watch support</li>
+</ol>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Apache-2.0</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/mmorga/generator-ramlapi">Generator-RAMLAPI</a> is maintained by <a href="https://github.com/mmorga">mmorga</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
