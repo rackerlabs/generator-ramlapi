@@ -1,3 +1,4 @@
+/** @module gulpJsonToRamlStruct */
 'use strict';
 
 var through2 = require('through2');
@@ -92,7 +93,11 @@ function doWorkFromJson(stream, file, enc, done) {
   correctRamlStructure(stream, file, ramlObj, done);
 }
 
-function jsonToRamlStruct() {
+/**
+ * Converts a RAML file as JSON with transformations from RAML Parser to
+ * to a pure RAML structure.
+ */
+module.exports = function jsonToRamlStruct() {
   var stream = through2.obj(function (file, enc, done) {
     var fail = function (message) {
       done(reportError(message));
@@ -114,6 +119,4 @@ function jsonToRamlStruct() {
   });
 
   return stream;
-}
-
-module.exports = jsonToRamlStruct;
+};

@@ -1,3 +1,4 @@
+/** @module gulpFixRamlOutput */
 'use strict';
 
 var through2 = require('through2');
@@ -68,7 +69,7 @@ function convertFoldingStyleToLiteralStyle(raml) {
  * @see YAML 1.2 Literal Style {@link http://www.yaml.org/spec/1.2/spec.html#id2795688}
  * @see YAML 1.2 Folded Style {@link http://www.yaml.org/spec/1.2/spec.html#id2796251}
  */
-function fixRamlOutput() {
+module.exports = function fixRamlOutput() {
   var stream = through2.obj(function (file, enc, done) {
     var ramlObj,
       fail = function (message) {
@@ -95,6 +96,4 @@ function fixRamlOutput() {
   });
 
   return stream;
-}
-
-module.exports = fixRamlOutput;
+};

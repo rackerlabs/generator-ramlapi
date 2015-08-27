@@ -40,7 +40,11 @@ function _input(name, message, defs, defaultVal, opts) {
   return prompt;
 }
 
-
+/**
+ * Looks for the RAML file in the root of the project
+ * @arg {Object} defs container for defaults
+ * @arg callback to call when complete
+ */
 function scanForRamlFile(defs, callback) {
   glob('*.raml', function (err, files) {
     if (err) {

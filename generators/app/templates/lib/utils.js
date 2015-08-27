@@ -1,7 +1,13 @@
+/** @module utils */
 'use strict';
 
 var traverse = require('traverse');
 
+/**
+ * Helper function to pretty-print RAML documents
+ * @arg ramlObj object containing the RAML document
+ * @returns string version of the RAML object
+ */
 function prettyJsonRaml(ramlObj) {
   return JSON.stringify(traverse(ramlObj).map(function (value) {
     if (typeof value === 'string' && value.length > 20) {
@@ -10,4 +16,5 @@ function prettyJsonRaml(ramlObj) {
   }), null, '  ');
 }
 
+/** pretty print RAML JSON object */
 module.exports.prettyJsonRaml = prettyJsonRaml;

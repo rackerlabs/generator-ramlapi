@@ -1,3 +1,4 @@
+/** @module gulpRamlLint */
 'use strict';
 
 var mapStream = require('map-stream'),
@@ -140,4 +141,5 @@ ramlLintPlugin.failAfterError = function () {
   });
 };
 
+/** Gulp plugin to run lint checks on the RAML file */
 module.exports = ramlLintPlugin;

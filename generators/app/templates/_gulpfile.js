@@ -9,11 +9,11 @@ var debug = require('gulp-debug');
 
 var ramlParser = require('./lib/gulp-raml-parser');
 var ramllint = require('./lib/gulp-ramllint');
-var deref = require('./lib/deref-raml-schema.js');
-var ramlStruct = require('./lib/json-to-raml-struct.js');
-var fixRamlOutput = require('./lib/fix-raml-output.js');
+var deref = require('./lib/gulp-deref-raml-schema.js');
+var ramlStruct = require('./lib/gulp-json-to-raml-struct.js');
+var fixRamlOutput = require('./lib/gulp-fix-raml-output.js');
 var raml2html = require('./lib/gulp-raml2html.js');
-var validateExamples = require('./lib/validate-examples.js');
+var validateExamples = require('./lib/gulp-validate-examples.js');
 
 var API_SPEC = '*.raml';
 var API_DEST = 'public';

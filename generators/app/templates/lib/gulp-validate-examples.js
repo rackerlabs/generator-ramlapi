@@ -1,3 +1,4 @@
+/** @module gulpValidateExamples */
 'use strict';
 
 var mapStream = require('map-stream');
@@ -195,4 +196,5 @@ validateExamplesPlugin.failAfterError = function () {
   });
 };
 
+/** Gulp plugin to validate RAML JSON examples against their schemas */
 module.exports = validateExamplesPlugin;

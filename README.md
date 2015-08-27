@@ -9,7 +9,7 @@
 * JSON Schema validation
 * Example validation against JSON Schema
 
-See also: 
+See also:
 
 * [Generator-RAMLAPI Home Page](http://www.markmorga.com/generator-ramlapi)
 * [API Docs](http://www.markmorga.com/generator-ramlapi/generator-ramlapi/0.2.4/index)

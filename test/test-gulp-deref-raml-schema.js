@@ -8,9 +8,9 @@ var gutil = require('gulp-util');
 var path = require('path');
 var ramlParser = require('raml-parser');
 
-var derefRamlSchema = require('../generators/app/templates/lib/deref-raml-schema');
+var derefRamlSchema = require('../generators/app/templates/lib/gulp-deref-raml-schema');
 
-describe('deref-raml-schema', function () {
+describe('gulp-deref-raml-schema', function () {
   it('properly deserialized schema references', function (done) {
 
     var schemaFile = path.resolve(__dirname, 'samples/schemas.raml'),

@@ -9,9 +9,9 @@ var path = require('path');
 var ramlParser = require('raml-parser');
 var fs = require('fs');
 
-var fixRamlOutput = require('../generators/app/templates/lib/fix-raml-output');
+var fixRamlOutput = require('../generators/app/templates/lib/gulp-fix-raml-output');
 
-describe('fix-raml-output', function () {
+describe('gulp-fix-raml-output', function () {
   it('converts YAML folding style string scalars to flow style', function (done) {
     var inputFile = path.resolve(__dirname, 'samples/schemas.raml');
     ramlParser.loadFile(inputFile, {transform: false})

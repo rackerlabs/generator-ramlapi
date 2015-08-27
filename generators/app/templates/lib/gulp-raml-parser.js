@@ -1,3 +1,4 @@
+/** @module gulpRamlParser */
 'use strict';
 
 var ramlParser = require('raml-parser'),
@@ -47,4 +48,5 @@ function ramlParserPlugin() {
   return through2.obj(ramlParserFunc);
 }
 
+/** Gulp plugin to validate that RAML Parser can parse the input RAML file */
 module.exports = ramlParserPlugin;

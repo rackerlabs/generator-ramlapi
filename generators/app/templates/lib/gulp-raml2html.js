@@ -1,3 +1,4 @@
+/** @module gulpRaml2Html */
 'use strict';
 var through2 = require('through2');
 var gutil = require('gulp-util');
@@ -83,4 +84,5 @@ function gulpRaml2Html(options) {
   return stream;
 }
 
+/** Product HTML documentation for a RAML input file. */
 module.exports = gulpRaml2Html;

@@ -1,3 +1,4 @@
+/** @module gulpDerefRamlSchema */
 'use strict';
 
 var async = require('async');
@@ -107,9 +108,7 @@ function derefRamlSchemaFunc(schemaFolder) {
   };
 }
 
-function derefRamlSchema(schemaFolder) {
+/** Gulp method to derefererence JSON Schema in the RAML file */
+module.exports = function derefRamlSchema(schemaFolder) {
   return through2.obj(derefRamlSchemaFunc(schemaFolder));
-}
-
-module.exports = derefRamlSchema;
-module.exports.derefRamlSchemaFunc = derefRamlSchemaFunc;
+};
