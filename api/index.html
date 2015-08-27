@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>generator-ramlapi</h1><p><code>generator-ramlapi</code> is a generator for <a href="http://yeoman.io">Yeoman</a> that generates a project scaffold for API development in RAML and JSON Schema.</p>
+<p><em>Features</em></p>
+<ul>
+<li>RAML validation</li>
+<li>RAML HTML document generation (via RAML2HTML) with improved HTML templates</li>
+<li>JSON Schema validation</li>
+<li>Example validation against JSON Schema</li>
+</ul>
+<p>See also: </p>
+<ul>
+<li><a href="http://www.markmorga.com/generator-ramlapi">Generator-RAMLAPI Home Page</a></li>
+<li><a href="http://www.markmorga.com/generator-ramlapi/generator-ramlapi/0.2.4/index">API Docs</a></li>
+</ul>
+<p><a href="https://npmjs.org/package/generator-ramlapi"><img src="https://nodei.co/npm/generator-ramlapi.png" alt="NPM"></a></p>
+<p><a href="https://travis-ci.org/mmorga/generator-ramlapi"><img src="https://travis-ci.org/mmorga/generator-ramlapi.svg?branch=master" alt="Build Status"></a>
+<a href="https://david-dm.org/mmorga/generator-ramlapi"><img src="https://david-dm.org/mmorga/generator-ramlapi.svg" alt="Dependency Status"></a>
+<a href="https://www.codacy.com/app/markmorga/generator-ramlapi"><img src="http://api.codacy.com:80/project/badge/0f44e2c1d52e418fb9a36cc9dacfef21" alt="Codacy Badge"></a></p>
+<h2>Getting Started:</h2><p><em>Installing Dependencies</em></p>
+<p>Install <a href="https://nodejs.org/download/">NodeJS</a>. On OSX, installation via <a href="https://www.npmjs.com/package/nvm">NVM</a> and/or <a href="brew.sh">Homebrew</a> is highly recommended.</p>
+<p>Update <a href="https://www.npmjs.com">NPM</a>. Depending on your installation, you may need to use <code>sudo</code> for the following commands.</p>
+<pre class="prettyprint source lang-bash"><code>npm install -g npm</code></pre><p>Install Yeoman, <a href="gulpjs.com">Gulp</a> and generator-ramlapi:</p>
+<pre class="prettyprint source lang-bash"><code>npm install -g yo gulp generator-ramlapi</code></pre><h2>Beginning a project</h2><p>Create a directory for your RAML API project and <code>cd</code> into it.</p>
+<p>Run the generator like this:</p>
+<pre class="prettyprint source lang-bash"><code>yo ramlapi</code></pre><p>The generator will ask you a number of questions. Answer these as completely as you can, but all can be changed later if need be.</p>
+<p>After the questions, the generator will install the NPM dependencies for your project.</p>
+<h2>Usage</h2><p>To run the validation and build HTML docs, simply run the command:</p>
+<pre class="prettyprint source lang-bash"><code>gulp</code></pre><p>Validates the JSON Schema, RAML, and produces documentation in the <code>public/</code> directory.</p>
+<h3>Project Structure</h3><ul>
+<li><em>`</em>.raml`*: files located in the root directory are documented.</li>
+<li><em><code>raml/</code></em>: RAML fragment files referenced by the primary RAML.</li>
+<li><em><code>schema/</code></em>: JSON Schema files referenced in RAML files (or fragments).</li>
+<li><em><code>examples/</code></em>: JSON example files for the JSON Schema.</li>
+<li><em><code>public/</code></em>: a folder suitable to publish to a GitHub project page with generated documentation.</li>
+<li><em><code>templates/</code></em>: contains the RAML2HTML templates that are used instead of the default templates.</li>
+</ul>
+<h3>RAML Notes</h3><p>RAML files should not include JSON Schema directly, but should instead use <code>!include</code> to include them from the <code>schema/</code> directory. This isn't essential - just a best practice.</p>
+<p><a href="https://github.com/kevinrenskers/raml2html">raml2html</a> is used to generate the documentation HTML.</p>
+<h3>Schema Notes</h3><p>Schema files are expected to be stored in the <code>schema/</code> directory.</p>
+<p>Example files are stored in the <code>examples/</code> directory.</p>
+<p>Example files that are included in a RAML media type section with a schema are validated against that schema.</p>
+<h2>Generator improvements to come</h2><ol>
+<li>scaffold the github page</li>
+<li>gulp-watch support</li>
+</ol>
+<h2>License</h2><p>Apache-2.0</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-gulpDerefRamlSchema.html">gulpDerefRamlSchema</a></li><li><a href="module-gulpFixRamlOutput.html">gulpFixRamlOutput</a></li><li><a href="module-gulpJsonToRamlStruct.html">gulpJsonToRamlStruct</a></li><li><a href="module-gulpRaml2Html.html">gulpRaml2Html</a></li><li><a href="module-gulpRamlLint.html">gulpRamlLint</a></li><li><a href="module-gulpRamlParser.html">gulpRamlParser</a></li><li><a href="module-gulpValidateExamples.html">gulpValidateExamples</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Global</h3><ul><li><a href="global.html#scanForRamlFile">scanForRamlFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Aug 26 2015 21:17:39 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
