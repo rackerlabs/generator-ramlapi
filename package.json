@@ -31,7 +31,6 @@
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-debug": "^2.1.0",
-    "gulp-documentation": "^1.0.1",
     "gulp-jsdoc": "^0.1.4",
     "gulp-jshint": "^1.11.2",
     "gulp-mocha": "^2.1.3",
