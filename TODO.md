@@ -23,11 +23,10 @@ Once a project is established...
 * ~~[ ] Re-validate pre-processed RAML and json schema~~
 * [X] Process the RAML into HTML docs (include schemas, examples, etc.)
 * [ ] Publish to github pages
-* [ ] See about adding additional ramllint rules here
 * [ ] Add js docs to source
 * [ ] Add custom rules to ramllint
 * [ ] Pull set of dependencies in the yeoman script from the generator's package.json devDependencies
-* [ ] Update the list of API docs directories in docs/ to prevent broken links
+* [ ] Formatting JSON and schema to match style
 
 Values:
 
