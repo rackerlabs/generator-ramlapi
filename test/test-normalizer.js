@@ -39,7 +39,7 @@ describe('normalize-uri', function () {
     });
 });
 
-describe('normalize-uri', function () {
+describe('normalize-version', function () {
     var uri = "v1.01";
     var expected = "1.01";
     var actual = "";
@@ -47,7 +47,7 @@ describe('normalize-uri', function () {
         actual = normal.normalizeVersion(uri);
         done();
     });
-    it('removes trailing slash', function () {
+    it('removes dup v', function () {
         assert.deepEqual(actual, expected, 'transformed object != expected');
     });
 });
