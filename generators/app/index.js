@@ -18,7 +18,10 @@ var ramlParser = require('raml-parser');
 // ramlFile               | raml file                  | {projectName}-{version}
 
 function titleize(s) {
+<<<<<<< HEAD
   //s.split('API').join('');
+=======
+>>>>>>> fac4cfb870b565f663bd54014adda6c9eba9bcb2
   return s;
 }
 
