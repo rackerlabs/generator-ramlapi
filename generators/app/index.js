@@ -6,6 +6,8 @@ var _ = require('lodash/string');
 var glob = require('glob');
 var async = require('async');
 var ramlParser = require('raml-parser');
+var normalize = require('./templates/lib/normalizer');
+var normal = new normalize.normalizer();
 
 // Configuration Options and defaults
 // name                   | existing project default   | new project default
@@ -118,7 +120,7 @@ module.exports = yeoman.generators.Base.extend({
   _getPrompts: function (defs) {
     return [
       _input('projectTitle', 'What is the title of your API? (example: "Widget Warehouse")',
-        defs, defs.projectTitle || titleize(this.appname)),
+        defs, normal.normalizeTitle(defs.projectTitle) || titleize(this.appname)),
       _input('projectName', 'What is the name of your API? (example: "widget-warehouse")',
         defs, defs.projectName || _.kebabCase(this.appname), {
           validate: function (input) {
@@ -135,7 +137,7 @@ module.exports = yeoman.generators.Base.extend({
           }
         }),
       _input('version', 'What version do you want to use?',
-        defs, defs.version || 'v1', {
+        defs, normal.normalizeVersion(defs.version) || 'v1', {
           validate: function (input) {
             if (input.match(/v?(\d+(\.\d+){0,2})/)) {
               return true;
@@ -146,6 +148,7 @@ module.exports = yeoman.generators.Base.extend({
       _input('baseUri', 'What is the API\'s baseUri?',
         defs, null, {
           default: function (answers) {
+            normal.normalizeUri(defs.baseUri);
             return defs.baseUri || 'https://' + answers.projectName + '.example.com';
           }
         })];
