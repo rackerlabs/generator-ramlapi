@@ -1,0 +1,15 @@
+#%RAML 0.8
+---
+title: <%= projectTitle %>
+documentation:
+  - title: <%= projectTitle %>
+    content: <%= projectDescription %>
+baseUri: <%= baseUri %>/{version}
+version: v<%= version %>
+mediaType: application/json
+protocols: [ HTTPS ]
+
+schemas:
+  - Accepted: !include schema/accepted-full.json
+/acceptances:
+  !include raml/acceptances.raml

@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "person",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "age": {
+      "type": "integer"
+    },
+    "car": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "id": "car",
+      "properties": {
+        "color": {
+          "type": "string"
+        },
+        "make": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "year": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "make",
+        "model",
+        "year",
+        "color"
+      ],
+      "type": "object"
+    }
+  },
+  "required": ["name", "age"]
+}

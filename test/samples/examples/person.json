@@ -1,0 +1,10 @@
+{
+  "name": "Bruce Campbell",
+  "age": 50,
+  "car": {
+    "make": "Ford",
+    "model": "Falcon",
+    "year": 1968,
+    "color": "green"
+  }
+}

@@ -1,0 +1,72 @@
+#%RAML 0.8
+---
+title: Sample for dereference schemas
+version: v1
+baseUri: 'https://example.com/{version}'
+documentation:
+  - title: Sample API
+    content: |
+      This is a sample documentation fragment as a string scalar. The tooling
+      should be able to deal with very lone line lengths here.
+
+      Lorem ipsum Et Duis esse minim in incididunt Excepteur ullamco amet sunt
+      amet ut pariatur magna adipisicing esse nostrud dolore labore in minim
+      Duis dolore minim tempor in fugiat.
+schemas:
+  - person: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "person",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "car": {
+            "$ref": "car.json"
+          }
+        },
+        "required": ["name", "age"]
+      }
+  - schemas/car.json
+/car:
+  get:
+    description: |
+      This is a long description with a really long line length that the YAML
+      library will really want to serialize using the folding style that the
+      RAML parser can't deal with.
+    responses:
+      '200':
+        body:
+          application/json:
+            schema: |
+              {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "id": "car",
+                "type": "object",
+                "properties": {
+                  "make": {
+                    "type": "string"
+                  },
+                  "model": {
+                    "type": "string"
+                  },
+                  "year": {
+                    "type": "integer"
+                  },
+                  "color": {
+                    "type": "string"
+                  }
+                },
+                "required": ["make", "model", "year", "color"]
+              }
+            example: |
+              {
+                "make": "Ford",
+                "model": "Falcon",
+                "year": 1968,
+                "color": "green"
+              }

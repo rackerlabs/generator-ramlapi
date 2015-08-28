@@ -1,0 +1,48 @@
+{
+  "name": "generator-ramlapi",
+  "version": "0.2.5",
+  "description": "Yeoman generator for RAML API projects",
+  "license": "Apache-2.0",
+  "main": "app/index.js",
+  "repository": "mmorga/generator-ramlapi",
+  "author": {
+    "name": "Mark Morga",
+    "email": "markmorga@gmail.com",
+    "url": "https://github.com/mmorga"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "async": "^1.4.2",
+    "chalk": "^1.1.1",
+    "glob": "^5.0.14",
+    "lodash": "^3.10.1",
+    "raml-parser": "^0.8.11",
+    "yeoman-generator": "^0.20.3",
+    "yosay": "^1.0.5"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-debug": "^2.1.0",
+    "gulp-jsdoc": "^0.1.4",
+    "gulp-jshint": "^1.11.2",
+    "gulp-mocha": "^2.1.3",
+    "gulp-plumber": "^1.0.1",
+    "gulp-util": "^3.0.6",
+    "js-yaml": "^3.3.1",
+    "json-schema-ref-parser": "^1.0.0-alpha.10",
+    "map-stream": "0.1.0",
+    "mocha": "*",
+    "ramllint": "https://github.com/mmorga/ramllint.git#a4f8eac52a5be139a4801e4df5fd9929decb89dd",
+    "through2": "^2.0.0",
+    "traverse": "^0.6.6",
+    "tv4": "^1.2.3"
+  }
+}
