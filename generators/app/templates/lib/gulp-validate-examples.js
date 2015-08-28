@@ -11,6 +11,15 @@ var traverse = require('traverse');
 
 var matches = [];
 
+/**
+ * Produces a meaningful PluginError instance with a message, optional context
+ * to indicate where the error occurred, and optional exception.
+ * @private
+ * @arg {string} message free text message to report
+ * @arg {object} context that responds to the path method to show where the error occurred
+ * @arg err an optional Error instance
+ * @returns a new gutil.PluginError instance
+ */
 function reportError(message, context, err) {
   var msg = message || 'Error';
   if (context) {

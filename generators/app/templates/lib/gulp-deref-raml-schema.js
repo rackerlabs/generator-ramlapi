@@ -9,6 +9,15 @@ var gutil = require('gulp-util');
 var path = require('path');
 var fs = require('fs');
 
+/**
+ * Produces a meaningful PluginError instance with a message, optional context
+ * to indicate where the error occurred, and optional exception.
+ * @private
+ * @arg {string} message free text message to report
+ * @arg {object} context that responds to the path method to show where the error occurred
+ * @arg err an optional Error instance
+ * @returns a new gutil.PluginError instance
+ */
 function reportError(message, context, err) {
   var msg = message || 'Error';
   if (context) {
@@ -20,6 +29,12 @@ function reportError(message, context, err) {
   return new gutil.PluginError('deref-raml-schema', msg);
 }
 
+/**
+ * Dereferences a RAML schema instance
+ * @private
+ * @arg task async task containing the reference to the JSON schema to be dereferenced
+ * @arg cb callback to indicate error or dereference is complete
+ */
 function dereferenceSchema(task, cb) {
   var json,
     schemaPath,
@@ -50,6 +65,14 @@ function dereferenceSchema(task, cb) {
   });
 }
 
+/**
+ * Dereferences JSON schema references in a RAML object
+ * @private
+ * @arg {object} obj RAML JSON object
+ * @arg {string} baseFolder of main RAML file
+ * @arg {string} schemaFolder base folder containing the JSON schema files
+ * @arg cb callback to indicate error or dereferences are complete
+ */
 function derefSchemas(obj, baseFolder, schemaFolder, cb) {
   var q = async.queue(dereferenceSchema),
     previousDir = process.cwd();
@@ -74,6 +97,12 @@ function derefSchemas(obj, baseFolder, schemaFolder, cb) {
   };
 }
 
+/**
+ * Gulp plugin function to dereference all JSON schema references in a RAML file
+ * @arg {string} schemaFolder base folder for JSON schema file references
+ * @returns a Gulp plugin function that dereferences JSON Schema referenced in
+ *          the RAML
+ */
 function derefRamlSchemaFunc(schemaFolder) {
   return function (file, enc, done) {
     var raml, stream = this, fail = function (message, err) {
