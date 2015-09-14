@@ -2,3 +2,5 @@ node_modules/
 *.sublime*
 results.txt
 docs/
+*.idea
+
