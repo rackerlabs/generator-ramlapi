@@ -1,5 +1,7 @@
 # generator-ramlapi
 
+[![Join the chat at https://gitter.im/rackerlabs/generator-ramlapi](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rackerlabs/generator-ramlapi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 `generator-ramlapi` is a generator for [Yeoman](http://yeoman.io) that generates a project scaffold for API development in RAML and JSON Schema.
 
 *Features*
